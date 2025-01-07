@@ -78,3 +78,162 @@ db.courses.aggregate([
 Task 15: Find the highest credit course
 
 db.courses.find().sort({ credits: -1 }).limit(1);
+
+Task 16: Use the $and operator for filtering students
+
+db.students.find({
+  $and: [
+    { department: "CSE" },
+    { courses: { $exists: true, $size: { $gt: 2 } } }
+  ]
+});
+
+Task 17: Add a new field activeStatus set to true
+
+db.students.updateMany({}, { $set: { activeStatus: true } });
+
+Task 18: Rename coursesEnrolled to enrolledCourses
+
+db.students.updateMany({}, { $rename: { "coursesEnrolled": "enrolledCourses" } });
+
+Task 19: Add a field graduationYear with a default value
+
+db.students.updateMany({}, { $set: { graduationYear: 2025 } });
+
+Task 20: Add course CS303 to Mahir’s coursesEnrolled
+
+db.students.updateOne(
+  { name: "Mahir" },
+  { $push: { coursesEnrolled: "CS303" } }
+);
+
+Task 21: Remove course CS101 from Jenil’s courses
+
+db.students.updateOne(
+  { name: "Jenil" },
+  { $pull: { courses: "CS101" } }
+);
+
+Task 22: Remove student with roll number CS1004
+
+db.students.deleteOne({ rollNumber: "CS1004" });
+
+Task 23: Find students enrolled in both CS101 and MATH202
+
+db.students.find({ courses: { $all: ["CS101", "MATH202"] } });
+
+Task 24: Search for students whose name starts with "A"
+
+db.students.find({ name: { $regex: "^A", $options: "i" } });
+
+Task 25: Find students with an entry in coursesEnrolled
+
+db.students.find({ coursesEnrolled: { $exists: true, $not: { $size: 0 } } });
+
+Task 26: Add a grades field
+
+db.students.updateMany({}, { $set: { grades: [] } });
+
+Task 27: Use $elemMatch to find specific courses and grades
+
+db.students.find({
+  grades: { $elemMatch: { course: "CS101", grade: "A" } }
+});
+
+Task 28: Query students with exactly 2 courses enrolled
+
+db.students.find({ coursesEnrolled: { $size: 2 } });
+
+Task 29: Perform text search for "Digital Electronics"
+
+db.courses.createIndex({ title: "text" });
+
+Task 30: Create a compound index on department and year
+
+db.students.createIndex({ department: 1, year: 1 });
+
+Task 31: Sort students by rollNumber
+
+db.students.find().sort({ rollNumber: 1 });
+
+Task 32: Create a unique index on rollNumber
+
+db.students.createIndex({ rollNumber: 1 }, { unique: true });
+
+Task 33: Update course CS101 to Intro to Programming
+
+db.courses.updateOne(
+  { courseCode: "CS101" },
+  { $set: { name: "Intro to Programming" } }
+);
+
+Task 34: Backup the database
+
+mongodump --db CodingGitaStudents --out /path/to/backup
+
+Task 35: Restore the database
+
+mongorestore --db CodingGitaStudents /path/to/backup/CodingGitaStudents
+
+Task 36: Use $project to reshape data
+
+db.students.aggregate([
+  { $project: { name: 1, department: 1, _id: 0 } }
+]);
+
+Task 37: Use $unwind to split coursesEnrolled
+
+db.students.aggregate([
+  { $unwind: "$coursesEnrolled" }
+]);
+
+Task 38: Limit to the first 3 students
+
+db.students.find().limit(3);
+
+Task 39: Skip the first 2 students
+
+db.students.find().skip(2);
+
+Task 40: Use $lookup to join students with courses
+
+db.students.aggregate([
+  {
+    $lookup: {
+      from: "courses",
+      localField: "coursesEnrolled",
+      foreignField: "courseCode",
+      as: "courseDetails"
+    }
+  }
+]);
+
+Task 41: Create a studentFeedback collection
+
+db.studentFeedback.insertOne({
+  studentRollNumber: "CS1001",
+  feedbackText: "Great course content!",
+  date: new Date()
+});
+
+Task 42: Find feedback from Jenil
+
+db.studentFeedback.find({ studentRollNumber: "CS1002" });
+
+Task 43: Update multiple fields for Arjun
+
+db.students.updateOne(
+  { name: "Arjun" },
+  { $set: { department: "ECE", coursesEnrolled: ["CS202", "CS303"] } }
+);
+
+Task 44: Create an index on coursesEnrolled
+
+db.students.createIndex({ coursesEnrolled: 1 });
+
+Task 45: Query for nested grades
+
+db.students.find({
+  grades: { $elemMatch: { course: "CS101", grade: "A" } }
+});
+
